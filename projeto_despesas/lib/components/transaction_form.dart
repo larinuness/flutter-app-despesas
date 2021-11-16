@@ -63,7 +63,12 @@ class _TransactionFormState extends State<TransactionForm> {
                 onPressed: () {
                   _submitForm();
                 },
-                child: const Text('Nova Transação'),
+                child: const Text(
+                  'Nova Transação',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             )
           ],

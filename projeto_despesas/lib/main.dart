@@ -2,12 +2,12 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:projeto_despesas/components/no_transactions.dart';
+import 'package:projeto_despesas/components/chart.dart';
 import 'components/transaction_form.dart';
 
 import '../models/transaction.dart';
-import './components/transaction_form.dart';
-import './components/transaction_list.dart';
+
+import 'components/transaction_list.dart';
 
 main() => runApp(const ExpensesApp());
 
@@ -22,6 +22,7 @@ class ExpensesApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.deepPurple,
           //deixa a cor do floatingActionButton mais escuro
+          // ignore: deprecated_member_use
           accentColor: Colors.deepPurple[900],
           textTheme: GoogleFonts.quicksandTextTheme()),
     );
@@ -38,11 +39,38 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [
     Transaction(
-        id: '1',
-        title: 'Skin do Jhin',
-        value: 50,
-        date: DateTime.now().subtract(Duration(days: 2))),
+      id: '1',
+      title: 'Skin do Jhin',
+      value: 50,
+      //pega o dia de hoje e subtrai
+      date: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+    Transaction(
+      id: '2',
+      title: 'Skin da Kaisa',
+      value: 30,
+      //pega o dia de hoje e subtrai
+      date: DateTime.now().subtract(const Duration(days: 5)),
+    ),
+    Transaction(
+      id: '2',
+      title: 'Skin da Lux',
+      value: 35,
+      //pega o dia de hoje e subtrai
+      date: DateTime.now().subtract(const Duration(days: 3)),
+    ),
   ];
+  //filter
+  //vai checar se as transações entra dentro dos 7 dias
+  //se for fora do 7 dias vai retornar false
+  List<Transaction> get _recentTransactions {
+    return _transactions.where((tr) {
+      //se a data for depois de uma data subtraida 7 dias atrás(dataRecente)
+      // é true
+      //se for antes, é false
+      return tr.date.isAfter(DateTime.now().subtract(const Duration(days: 7)));
+    }).toList();
+  }
 
   _openTransactionFormModal(BuildContext context) {
     //aparecer um modal no rodapé
@@ -72,6 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pop();
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +112,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         leading: const Icon(Icons.shopping_basket_outlined),
+        actions: [
+          IconButton(
+            onPressed: () => _openTransactionFormModal(context),
+            icon: const Icon(
+              Icons.add,
+            ),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -90,13 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(
-              width: double.infinity,
-              child: Card(
-                child: Text('Gráficos'),
-                elevation: 5,
-              ),
-            ),
+            Chart(recentsTransactions: _recentTransactions),
             TransactionList(transactions: _transactions)
           ],
         ),

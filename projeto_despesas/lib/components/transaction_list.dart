@@ -32,6 +32,7 @@ class TransactionList extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(
+                            // ignore: deprecated_member_use
                             color: Theme.of(context).accentColor,
                             width: 2,
                           ),
