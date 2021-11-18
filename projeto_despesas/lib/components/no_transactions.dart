@@ -5,18 +5,25 @@ class NoTransactions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Você não possui Transações',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-        const SizedBox(
-          height: 20,
-        ),
-        Center(
-          child:
-              Image.asset('assets/images/sademoji.png', height: 90, width: 90),
-        ),
-      ],
-    );
+    return LayoutBuilder(builder: (ctx, constraints) {
+      return Column(
+        children: [
+          SizedBox(height: constraints.maxHeight * 0.1),
+          SizedBox(
+            height: constraints.maxHeight * 0.2,
+            child: const Text('Você não possui Transações',
+                style: TextStyle(fontWeight: FontWeight.w500)),
+          ),
+          SizedBox(
+            height: constraints.maxHeight * 0.02,
+          ),
+          Center(
+            child: Image.asset('assets/images/sademoji.png',
+                height: constraints.maxHeight * 0.3,
+                width: constraints.maxWidth * 0.3),
+          ),
+        ],
+      );
+    });
   }
 }

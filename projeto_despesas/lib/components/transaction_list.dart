@@ -12,49 +12,43 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 500,
-      //se a lista tiver vazia mostra msg com emoji
-      //se tiver algo mostra a lista com os itens
-      child: transactions.isEmpty
-          ? const NoTransactions()
-          : ListView.builder(
-              //quantidade de itens
-              itemCount: transactions.length,
-              // ctx = context
-              itemBuilder: (ctx, index) {
-                final tr = transactions[index];
-                return Card(
-                  elevation: 2,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: FittedBox(
-                          child: Text(
-                            'R\$${tr.value.toString().replaceAll('.', ',')}',
-                          ),
+    return transactions.isEmpty
+        ? const NoTransactions()
+        : ListView.builder(
+            //quantidade de itens
+            itemCount: transactions.length,
+            // ctx = context
+            itemBuilder: (ctx, index) {
+              final tr = transactions[index];
+              return Card(
+                elevation: 2,
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: FittedBox(
+                        child: Text(
+                          'R\$${tr.value.toString().replaceAll('.', ',')}',
                         ),
                       ),
                     ),
-                    title: Text(
-                      tr.title,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    subtitle: Text(
-                      DateFormat('d MMM y').format(tr.date),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () => onRemove(tr.id),
-                      icon: const Icon(Icons.delete),
-                    ),
                   ),
-                );
-              },
-            ),
-    );
+                  title: Text(
+                    tr.title,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  subtitle: Text(
+                    DateFormat('d MMM y').format(tr.date),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () => onRemove(tr.id),
+                    icon: const Icon(Icons.delete),
+                  ),
+                ),
+              );
+            },
+          );
   }
 }

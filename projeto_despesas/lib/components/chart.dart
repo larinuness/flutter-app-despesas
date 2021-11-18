@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:projeto_despesas/components/chart_bar.dart';
+import 'chart_bar.dart';
 import '../models/transaction.dart';
 
 //o gráfico sempre vai pegar as transações final do mes

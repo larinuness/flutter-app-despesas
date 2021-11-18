@@ -1,8 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+
 import 'package:google_fonts/google_fonts.dart';
-import 'package:projeto_despesas/components/chart.dart';
+import 'components/chart.dart';
 import 'components/transaction_form.dart';
 
 import '../models/transaction.dart';
@@ -37,7 +38,81 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [];
+  bool _showChart = false;
+  final List<Transaction> _transactions = [
+    // Transaction(
+    //   id: "t1",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t2",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t3",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t4",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t5",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t6",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t7",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t8",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t9",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t10",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t11",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: "t12",
+    //   title: "Jogo",
+    //   value: 50.50,
+    //   date: DateTime.now(),
+    // ),
+  ];
 
   //filter
   //vai checar se as transações entra dentro dos 7 dias
@@ -93,33 +168,78 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Despesas Pessoais',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+    //deixa o app no modo retrato
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    final mediaQuery = MediaQuery.of(context);
+    bool isLandScape = mediaQuery.orientation == Orientation.landscape;
+
+    final appBar = AppBar(
+      title: const Text(
+        'Despesas Pessoais',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      leading: const Icon(Icons.shopping_basket_outlined),
+      actions: [
+        if (isLandScape)
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _showChart = !_showChart;
+              });
+            },
+            icon: Icon(
+              _showChart ? Icons.list : Icons.show_chart,
+            ),
+          ),
+        IconButton(
+          onPressed: () => _openTransactionFormModal(context),
+          icon: const Icon(
+            Icons.add,
           ),
         ),
-        leading: const Icon(Icons.shopping_basket_outlined),
-        actions: [
-          IconButton(
-            onPressed: () => _openTransactionFormModal(context),
-            icon: const Icon(
-              Icons.add,
-            ),
-          )
-        ],
-      ),
+      ],
+    );
+    //faz com que o tamanho que escolher pra ocupar a tela
+    //não conta com o appBar, assim tem 100% da tela pra gerenciar
+    //o espaço
+    final avaliableHeight = mediaQuery.size.height -
+        appBar.preferredSize.height -
+        mediaQuery.padding.top;
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           //vem padrão na column esse atributos
           //mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(recentsTransactions: _recentTransactions),
-            TransactionList(
-                transactions: _transactions, onRemove: _removeTransaction)
+            // if (isLandScape)
+            //   Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       Text('Exibir Gráfico'),
+            //       Switch(
+            //         value: _showChart,
+            //         onChanged: (value) {
+            //           setState(() {
+            //             _showChart = value;
+            //           });
+            //         },
+            //       ),
+            //     ],
+            //   ),
+            if (_showChart || !isLandScape)
+              SizedBox(
+                height: avaliableHeight * (isLandScape ? 0.7 : 0.25),
+                child: Chart(recentsTransactions: _recentTransactions),
+              ),
+            SizedBox(
+              height: avaliableHeight * 0.75,
+              child: TransactionList(
+                  transactions: _transactions, onRemove: _removeTransaction),
+            )
           ],
         ),
       ),

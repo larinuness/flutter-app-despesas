@@ -48,71 +48,77 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              onSubmitted: (_) => _submitForm(),
-              decoration: const InputDecoration(
-                labelText: 'Titulo',
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: EdgeInsets.only(
+              top: 10,
+              right: 10,
+              left: 10,
+              bottom: 10 + MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            children: [
+              TextField(
+                controller: _titleController,
+                onSubmitted: (_) => _submitForm(),
+                decoration: const InputDecoration(
+                  labelText: 'Titulo',
+                ),
+                keyboardType: TextInputType.text,
               ),
-              keyboardType: TextInputType.text,
-            ),
-            TextField(
-              // inputFormatters: [maskFormatter],
-              controller: _valueController,
-              onSubmitted: (_) => _submitForm(),
-              decoration: const InputDecoration(
-                labelText: 'Valor (R\$)',
+              TextField(
+                // inputFormatters: [maskFormatter],
+                controller: _valueController,
+                onSubmitted: (_) => _submitForm(),
+                decoration: const InputDecoration(
+                  labelText: 'Valor (R\$)',
+                ),
+                //withOptions porque se for no Ios, vai deixar separar por casas decimais
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
               ),
-              //withOptions porque se for no Ios, vai deixar separar por casas decimais
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-            ),
-            SizedBox(
-              height: 70,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? 'Nenhuma data selecionada'
-                          : 'Data selecionada: ${DateFormat('dd/MM/y').format(_selectedDate!)}',
+              SizedBox(
+                height: 70,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? 'Nenhuma data selecionada'
+                            : 'Data selecionada: ${DateFormat('dd/MM/y').format(_selectedDate!)}',
+                      ),
                     ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30))),
-                    onPressed: _showDatePicker,
-                    child: const Text(
-                      'Selecionar data',
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () {
-                  _submitForm();
-                },
-                child: const Text(
-                  'Nova Transação',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30))),
+                      onPressed: _showDatePicker,
+                      child: const Text(
+                        'Selecionar data',
+                      ),
+                    )
+                  ],
                 ),
               ),
-            )
-          ],
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () {
+                    _submitForm();
+                  },
+                  child: const Text(
+                    'Nova Transação',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
