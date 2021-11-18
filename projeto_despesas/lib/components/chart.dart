@@ -35,19 +35,41 @@ class Chart extends StatelessWidget {
         'day': DateFormat.E().format(weekDay)[0],
         'value': totalSum,
       };
+      //reversed muda a ordem da lista, o dia atual fica na direita
+    }).reversed.toList();
+  }
+
+  double get _weekTotalValue {
+    //fold é como um reduce, tem o acumulador e o elemento atual
+    //faz uma operação sobre esses parametros, o retorno é o acumulador
+    return groupedTransactions.fold(0.0, (sum, tr) {
+      return sum + tr['value'];
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    groupedTransactions;
     return Card(
       elevation: 2,
       margin: const EdgeInsets.all(20.0),
-      child: Row(
-        children: groupedTransactions.map((tr) {
-          return ChartBar(label: tr['day'], value: tr['value'], percentage: 0);
-        }).toList(),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupedTransactions.map((tr) {
+            return Flexible(
+              fit: FlexFit.tight,
+              flex: 23,
+              child: ChartBar(
+                label: tr['day'],
+                value: tr['value'],
+                percentage: _weekTotalValue == 0
+                    ? 0
+                    : (tr['value'] as double) / _weekTotalValue,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

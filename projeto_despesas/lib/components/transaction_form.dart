@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 // import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class TransactionForm extends StatefulWidget {
-  final void Function(String, double) onSubmit;
+  final void Function(String, double, DateTime) onSubmit;
 
   const TransactionForm({Key? key, required this.onSubmit}) : super(key: key);
 
@@ -13,8 +14,8 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _titleController = TextEditingController();
-
   final TextEditingController _valueController = TextEditingController();
+  DateTime? _selectedDate;
 
   _submitForm() {
     final title = _titleController.text;
@@ -22,13 +23,27 @@ class _TransactionFormState extends State<TransactionForm> {
     //o valor padrão vai ser 0.0
     final value = double.tryParse(_valueController.text) ?? 0.0;
 
-    if (title.isEmpty || value <= 0) {
+    if (title.isEmpty || value <= 0 || _selectedDate == null) {
       //só sai da função
       //não faz nada
       return;
     }
     //passa os valores do title e value por paramêtro pro atributo do tipo função
-    widget.onSubmit(title, value);
+    widget.onSubmit(title, value, _selectedDate!);
+  }
+
+  //mostrarCalendario
+  _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2021),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      setState(() {
+        _selectedDate = pickedDate!;
+      });
+    });
   }
 
   @override
@@ -36,7 +51,7 @@ class _TransactionFormState extends State<TransactionForm> {
     return Card(
       elevation: 5,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
             TextField(
@@ -48,15 +63,40 @@ class _TransactionFormState extends State<TransactionForm> {
               keyboardType: TextInputType.text,
             ),
             TextField(
-                // inputFormatters: [maskFormatter],
-                controller: _valueController,
-                onSubmitted: (_) => _submitForm(),
-                decoration: const InputDecoration(
-                  labelText: 'Valor (R\$)',
-                ),
-                //withOptions porque se for no Ios, vai deixar separar por casas decimais
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true)),
+              // inputFormatters: [maskFormatter],
+              controller: _valueController,
+              onSubmitted: (_) => _submitForm(),
+              decoration: const InputDecoration(
+                labelText: 'Valor (R\$)',
+              ),
+              //withOptions porque se for no Ios, vai deixar separar por casas decimais
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+            ),
+            SizedBox(
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? 'Nenhuma data selecionada'
+                          : 'Data selecionada: ${DateFormat('dd/MM/y').format(_selectedDate!)}',
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30))),
+                    onPressed: _showDatePicker,
+                    child: const Text(
+                      'Selecionar data',
+                    ),
+                  )
+                ],
+              ),
+            ),
             SizedBox(
               width: double.infinity,
               child: TextButton(
@@ -66,6 +106,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 child: const Text(
                   'Nova Transação',
                   style: TextStyle(
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -37,29 +37,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-      id: '1',
-      title: 'Skin do Jhin',
-      value: 50,
-      //pega o dia de hoje e subtrai
-      date: DateTime.now().subtract(const Duration(days: 2)),
-    ),
-    Transaction(
-      id: '2',
-      title: 'Skin da Kaisa',
-      value: 30,
-      //pega o dia de hoje e subtrai
-      date: DateTime.now().subtract(const Duration(days: 5)),
-    ),
-    Transaction(
-      id: '2',
-      title: 'Skin da Lux',
-      value: 35,
-      //pega o dia de hoje e subtrai
-      date: DateTime.now().subtract(const Duration(days: 3)),
-    ),
-  ];
+  final List<Transaction> _transactions = [];
+
   //filter
   //vai checar se as transações entra dentro dos 7 dias
   //se for fora do 7 dias vai retornar false
@@ -78,17 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
         //o context é a MyHomePage
         context: context,
         builder: (_) {
-          return TransactionForm(onSubmit: _addTransaction);
+          return SizedBox(
+            height: 350,
+            child: TransactionForm(onSubmit: _addTransaction),
+          );
         });
   }
 
-  _addTransaction(String title, double value) {
+  _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
       //pega um valor double aleatório e converte em String
       id: Random().nextDouble().toString(),
       title: title,
       value: value,
-      date: DateTime.now(),
+      date: date,
     );
     //vai add uma transação nova na lista de transações
     //atualizada a lista com uma transactio nova
@@ -100,7 +82,15 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pop();
   }
 
-  
+  //function que vai excluir uma transação
+  _removeTransaction(String id) {
+    //tá no setState porque vai deletar na hora
+    setState(() {
+      //tr = transaction
+      _transactions.removeWhere((tr) => tr.id == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(recentsTransactions: _recentTransactions),
-            TransactionList(transactions: _transactions)
+            TransactionList(
+                transactions: _transactions, onRemove: _removeTransaction)
           ],
         ),
       ),

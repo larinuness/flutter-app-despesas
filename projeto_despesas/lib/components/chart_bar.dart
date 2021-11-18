@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ChartBar extends StatelessWidget {
+  //label vai ser onde fica os dias da semana
   final String label;
   final double value;
   final double percentage;
@@ -16,20 +17,50 @@ class ChartBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          value.toStringAsFixed(2),
+        //diminui o valor pra tentar fica igual aos outros
+        SizedBox(
+          height: 17,
+          child: FittedBox(
+            child: Text(
+              value.toStringAsFixed(2).replaceAll('.', ','),
+            ),
+          ),
         ),
         const SizedBox(
           height: 5,
         ),
-        Container(
+        SizedBox(
           height: 60,
           width: 10,
-          child: null,
+          child: Stack(
+            //deixa o gráfico subindo de baixa pra cima
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+              ),
+              //um sizedbox fracionado
+              FractionallySizedBox(
+                heightFactor: percentage,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(5)),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(
           height: 5,
         ),
+        Text(label)
       ],
     );
   }
