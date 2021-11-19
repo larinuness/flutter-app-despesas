@@ -126,7 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final PreferredSizeWidget appBar = AppBar(
       title: const Text('Despesas Pessoais'),
+      centerTitle: true,
       actions: actions,
+      leading: const Icon(Icons.shopping_basket_outlined),
     );
     //faz com que o tamanho que escolher pra ocupar a tela
     //não conta com o appBar, assim tem 100% da tela pra gerenciar
@@ -147,9 +149,9 @@ class _MyHomePageState extends State<MyHomePage> {
             //     mainAxisAlignment: MainAxisAlignment.center,
             //     children: <Widget>[
             //       Text('Exibir Gráfico'),
-            //Switch.adaptive vai mostrar de acordo com o tipo de SO     
+            //Switch.adaptive vai mostrar de acordo com o tipo de SO
             //       Switch.adaptive(
-            //activeColor é a cor quando estiver ativo o switch  
+            //activeColor é a cor quando estiver ativo o switch
             //         activeColor: Theme.of(context).accentColor,
             //         value: _showChart,
             //         onChanged: (value) {
