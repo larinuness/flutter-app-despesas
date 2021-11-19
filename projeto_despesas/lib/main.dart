@@ -1,13 +1,13 @@
+import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'components/chart.dart';
-import 'components/transaction_form.dart';
 
 import '../models/transaction.dart';
-
+import 'components/chart.dart';
+import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
 
 main() => runApp(const ExpensesApp());
@@ -39,80 +39,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _showChart = false;
-  final List<Transaction> _transactions = [
-    // Transaction(
-    //   id: "t1",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t2",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t3",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t4",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t5",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t6",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t7",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t8",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t9",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t10",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t11",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "t12",
-    //   title: "Jogo",
-    //   value: 50.50,
-    //   date: DateTime.now(),
-    // ),
-  ];
+  final List<Transaction> _transactions = [];
 
   //filter
   //vai checar se as transações entra dentro dos 7 dias
@@ -133,7 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (_) {
           return SizedBox(
-            height: 350,
             child: TransactionForm(onSubmit: _addTransaction),
           );
         });
@@ -166,40 +92,41 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Widget _getIconButton(IconData icon, Function() fn) {
+    return Platform.isIOS
+        ? GestureDetector(onTap: fn, child: Icon(icon))
+        : IconButton(icon: Icon(icon), onPressed: fn);
+  }
+
   @override
   Widget build(BuildContext context) {
     //deixa o app no modo retrato
     // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     final mediaQuery = MediaQuery.of(context);
     bool isLandScape = mediaQuery.orientation == Orientation.landscape;
-
-    final appBar = AppBar(
-      title: const Text(
-        'Despesas Pessoais',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
+    //mostra o tipo icone de cada sistema
+    final iconList = Platform.isIOS ? CupertinoIcons.refresh : Icons.list;
+    final chartList =
+        Platform.isIOS ? CupertinoIcons.refresh : Icons.show_chart;
+    final actions = <Widget>[
+      if (isLandScape)
+        _getIconButton(
+          _showChart ? iconList : chartList,
+          () {
+            setState(() {
+              _showChart = !_showChart;
+            });
+          },
         ),
+      _getIconButton(
+        Platform.isIOS ? CupertinoIcons.add : Icons.add,
+        () => _openTransactionFormModal(context),
       ),
-      leading: const Icon(Icons.shopping_basket_outlined),
-      actions: [
-        if (isLandScape)
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _showChart = !_showChart;
-              });
-            },
-            icon: Icon(
-              _showChart ? Icons.list : Icons.show_chart,
-            ),
-          ),
-        IconButton(
-          onPressed: () => _openTransactionFormModal(context),
-          icon: const Icon(
-            Icons.add,
-          ),
-        ),
-      ],
+    ];
+
+    final PreferredSizeWidget appBar = AppBar(
+      title: const Text('Despesas Pessoais'),
+      actions: actions,
     );
     //faz com que o tamanho que escolher pra ocupar a tela
     //não conta com o appBar, assim tem 100% da tela pra gerenciar
@@ -207,20 +134,23 @@ class _MyHomePageState extends State<MyHomePage> {
     final avaliableHeight = mediaQuery.size.height -
         appBar.preferredSize.height -
         mediaQuery.padding.top;
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+
+    final bodyPage = SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           //vem padrão na column esse atributos
           //mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // if (isLandScape)
+            // if (isLandscape)
             //   Row(
             //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
+            //     children: <Widget>[
             //       Text('Exibir Gráfico'),
-            //       Switch(
+            //Switch.adaptive vai mostrar de acordo com o tipo de SO     
+            //       Switch.adaptive(
+            //activeColor é a cor quando estiver ativo o switch  
+            //         activeColor: Theme.of(context).accentColor,
             //         value: _showChart,
             //         onChanged: (value) {
             //           setState(() {
@@ -232,23 +162,43 @@ class _MyHomePageState extends State<MyHomePage> {
             //   ),
             if (_showChart || !isLandScape)
               SizedBox(
-                height: avaliableHeight * (isLandScape ? 0.7 : 0.25),
+                height: avaliableHeight * (isLandScape ? 0.8 : 0.3),
                 child: Chart(recentsTransactions: _recentTransactions),
               ),
             SizedBox(
-              height: avaliableHeight * 0.75,
+              height: avaliableHeight * (isLandScape ? 1 : 0.7),
               child: TransactionList(
                   transactions: _transactions, onRemove: _removeTransaction),
             )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => _openTransactionFormModal(context),
-      ),
-      //deixa o botão no rodapé centralizado
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: const Text('Despesas Pessoais'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: actions,
+              ),
+            ),
+            child: bodyPage,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: bodyPage,
+            //se for IOS não vai ter o floatingActionButton
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: const Icon(Icons.add),
+                    onPressed: () => _openTransactionFormModal(context),
+                  ),
+            //deixa o botão no rodapé centralizado
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+          );
   }
 }

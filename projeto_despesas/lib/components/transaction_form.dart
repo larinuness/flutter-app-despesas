@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+
+import 'adaptative_button.dart';
+import 'adaptative_date_picker.dart';
+import 'adaptative_text_field.dart';
 // import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class TransactionForm extends StatefulWidget {
@@ -32,19 +35,19 @@ class _TransactionFormState extends State<TransactionForm> {
     widget.onSubmit(title, value, _selectedDate!);
   }
 
-  //mostrarCalendario
-  _showDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2021),
-      lastDate: DateTime.now(),
-    ).then((pickedDate) {
-      setState(() {
-        _selectedDate = pickedDate!;
-      });
-    });
-  }
+  // //mostrarCalendario
+  // _showDatePicker() {
+  //   showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(2021),
+  //     lastDate: DateTime.now(),
+  //   ).then((pickedDate) {
+  //     setState(() {
+  //       _selectedDate = pickedDate!;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,64 +62,35 @@ class _TransactionFormState extends State<TransactionForm> {
               bottom: 10 + MediaQuery.of(context).viewInsets.bottom),
           child: Column(
             children: [
-              TextField(
+              AdaptativeTextField(
+                label: 'Título',
                 controller: _titleController,
-                onSubmitted: (_) => _submitForm(),
-                decoration: const InputDecoration(
-                  labelText: 'Titulo',
-                ),
-                keyboardType: TextInputType.text,
+                onSubmitted: (_) => _submitForm,
               ),
-              TextField(
-                // inputFormatters: [maskFormatter],
+              AdaptativeTextField(
+                label: 'Valor (R\$)',
                 controller: _valueController,
-                onSubmitted: (_) => _submitForm(),
-                decoration: const InputDecoration(
-                  labelText: 'Valor (R\$)',
-                ),
-                //withOptions porque se for no Ios, vai deixar separar por casas decimais
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
+                onSubmitted: (_) => _submitForm,
               ),
-              SizedBox(
-                height: 70,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _selectedDate == null
-                            ? 'Nenhuma data selecionada'
-                            : 'Data selecionada: ${DateFormat('dd/MM/y').format(_selectedDate!)}',
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30))),
-                      onPressed: _showDatePicker,
-                      child: const Text(
-                        'Selecionar data',
-                      ),
-                    )
-                  ],
-                ),
+              AdaptativeDatePicker(
+                selectedDate: _selectedDate,
+                onDateChanged: (newDate) {
+                  setState(() {
+                    _selectedDate = newDate;
+                  });
+                },
               ),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () {
-                    _submitForm();
-                  },
-                  child: const Text(
-                    'Nova Transação',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  AdaptativeButton(
+                    label: 'Nova Transação',
+                    onPressed: _submitForm,
                   ),
-                ),
-              )
+                ],
+              ),
             ],
           ),
         ),
